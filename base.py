@@ -9,9 +9,20 @@ class Adapter:
     output channels. It provides convenience methods to look up channnels
     or to chain adapters together using `+`.
     
+    __getitem__ provides output look up for a given input.
+    
+    Methods:
+    inv : return an Adapter with outputs and inputs reversed
+        This is useful for looking up an input for a given output
+    sort_by : inplace sort. Change the order of inputs and outputs.
+    
     Properties:
     in2out : dict-like, looks up output for a specified input
     out2in : dict-like, looks up input for a specified output
+    ins : array of inputs
+    outs : array of outputs
+    
+    
     """
     def __init__(self, l1, l2=None):
         """Initialize a new adapter.
@@ -95,19 +106,41 @@ class Adapter:
         return a3
     
     def __getitem__(self, key):
-        return self.in2out[key]
+        try:
+            res = self.in2out[key]
+        except TypeError:
+            # key was a list
+            res = np.array([self.in2out[kk] for kk in key], dtype=np.object)
+        except KeyError:
+            # key not an input
+            return None
+        return res
     
     @property
     def inv(self):
         return Adapter(self.outs, self.ins)
     
-    def slice(self, l):
-        """Return new Adapater, slice of this one
-        Reimplement sort_by with this
-        """
-        pass
+    def __str__(self):
+        return str(self.table)
+    
+    def __repr__(self):
+        return "Adapter(\n" + repr(self.table) + ")"
+    
+    def __getslice__(self, slc1, slc2):
+        """Returns outputs from slc1 to slc2 inclusive"""
+        i1 = np.where(self.ins == slc1)[0][0]
+        i2 = np.where(self.ins == slc2)[0][0] + 1
+        return self.outs[i1:i2]
+
     
     def sort_by(self, keys, reverse=False):
+        """Inplace sort by keys.
+        
+        If keys is:
+            'ins' : sort by inputs
+            'outs' : sort by outpus
+            a list of inputs : sort in that order
+        """
         if keys == 'ins':
             keys = sorted(self.table[:, 0])
         elif keys == 'outs':
@@ -118,7 +151,7 @@ class Adapter:
         if reverse:
             keys = keys[::-1]
     
-        l2 = [self.in2out[key] if key in self.in2out else None for key in keys]
+        l2 = self[keys]
         
         self.table = np.array([[ll1, ll2] for ll1, ll2 in zip(keys, l2)],
             dtype=np.object)
