@@ -1,11 +1,29 @@
 """Module providing my specific adapters"""
 from base import Adapter
 
+# Mat's adapters
+hd5a_hdmi2dip = Adapter(
+    list(range(2, 18)),
+    [4, 12, 13, 5, 3, 11, 14, 6, 2, 10, 15, 7, 1, 9, 16, 8],
+    )
+
+hd5a_hdmi2dip = Adapter(
+    list(range(2, 18)),
+    [5, 13, 12, 4, 6, 14, 11, 3, 7, 15, 10, 2, 8, 16, 9, 1],
+    )
+
+ho4_hdmi2headstage = Adapter(
+    list(range(1, 20)),
+    ['ACGnd', 24, 9, 25, 10, 26, 11, 27, 12, 28, 13, 29, 14, 30, 15, 31, 16, None, 33]
+    )
+
+
 headstage2fea = Adapter(
     [32, 16, 31, 15, 30, 14, 29, 13, 28, 12, 27, 11, 26, 10, 25, 9] +
-    [1, 17, 2, 18, 3, 19, 4, 20, 5, 21, 6, 22, 7, 23, 8, 24],
+    [1, 17, 2, 18, 3, 19, 4, 20, 5, 21, 6, 22, 7, 23, 8, 24] + 
+    ['ACGnd', 33],
     [31, 32, 29, 30, 27, 28, 25, 26, 23, 24, 21, 22, 19, 20, 17, 18] +
-    list(range(1, 17)))
+    list(range(1, 17)) + ['GND', 'REF'])
 
 tetname2mdp = Adapter(
     ['GND', 'REF'] + 
@@ -15,6 +33,19 @@ tetname2mdp = Adapter(
     ['T4-1', 'T4-2', 'T4-3', 'T4-4'],
     [1, 2, 3, 5, 7, 9, 4, 6, 8, 10, 11, 13, 15, 17, 12, 14, 16, 18]
     )
+
+hd4_hdmi2dip = Adapter(
+    [3, 5, 7, 9, 11, 13, 15, 17, 2, 4, 6, 8, 10, 12, 14, 16],
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 16, 15, 14, 13, 12, 11, 10])
+
+tetname2hdmi = Adapter(
+    ['GND', 'REF'] + 
+    ['T1-1', 'T1-2', 'T1-3', 'T1-4'] + 
+    ['T2-1', 'T2-2', 'T2-3', 'T2-4'] + 
+    ['T3-1', 'T3-2', 'T3-3', 'T3-4'] + 
+    ['T4-1', 'T4-2', 'T4-3', 'T4-4'],
+    [1, 19] + 
+    [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17])
 
 # this is technically adapter DD1?? DD2
 tetnamedual2mdpdual = Adapter(
