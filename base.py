@@ -63,7 +63,8 @@ class Adapter:
         # Return memoized dict
         if self._in2out is None:
             res = {}
-            for i1, i2 in self.table:
+            for row in self.table:
+                i1, i2 = row[0], row[-1]
                 if i1 is None:
                     continue
                 if i1 in res:
@@ -77,7 +78,8 @@ class Adapter:
         # Return memoized dict
         if self._out2in is None:
             res = {}
-            for i2, i1 in self.table:
+            for row in self.table:
+                i2, i1 = row[0], row[-1]
                 if i1 is None:
                     continue
                 if i1 in res:
@@ -88,7 +90,7 @@ class Adapter:
     
     @property
     def outs(self):
-        return self.table[:, 1]
+        return self.table[:, -1]
     
     @property
     def ins(self):
@@ -97,12 +99,17 @@ class Adapter:
     def __add__(self, a2):
         """Append a new column and keep the intermediaries?"""
         a3 = Adapter(self.ins.copy(), self.outs.copy())
+        a3.table = self.table.copy()
         d = a2.in2out
+        
+        new_table = list(a3.table.transpose())
+        new_table.append(new_table[-1])
+        a3.table = np.asarray(new_table, dtype=np.object).transpose()
         for n, i2 in enumerate(self.outs):
             try:
-                a3.table[n, 1] = d[i2]
+                a3.table[n, -1] = d[i2]
             except KeyError:
-                a3.table[n, 1] = None
+                a3.table[n, -1] = None
         return a3
     
     def __getitem__(self, key):
@@ -118,7 +125,10 @@ class Adapter:
     
     @property
     def inv(self):
-        return Adapter(self.outs, self.ins)
+        a = Adapter(self.outs, self.ins)
+        a.table = self.table[:, ::-1]
+        return a
+        
     
     def __str__(self):
         return str(self.table)
@@ -144,17 +154,21 @@ class Adapter:
         if keys == 'ins':
             keys = sorted(self.table[:, 0])
         elif keys == 'outs':
-            t = sorted(self.table[:, 1])
+            t = sorted(self.table[:, -1])
             keys = [self.out2in[tt] for tt in t]
             
         
         if reverse:
             keys = keys[::-1]
     
-        l2 = self[keys]
+        l = list(self.table[:,0])
+        idxs = [l.index(key) for key in keys]
+    
+        #l2 = self[keys]
         
-        self.table = np.array([[ll1, ll2] for ll1, ll2 in zip(keys, l2)],
-            dtype=np.object)
+        #self.table = np.array([[ll1, ll2] for ll1, ll2 in zip(keys, l2)],
+        #    dtype=np.object)
+        self.table = self.table[idxs]
         
         return self
 
