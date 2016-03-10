@@ -48,43 +48,46 @@ plexon64ch_omnetics2plexonnumbers = Adapters.Adapter(
     )
 
 
-# This is from samtec numbers to Omnetics numbers
-# This is the actual numbering on the Omnetics connector, from 1-36
-samtec2omnetics = Adapters.Adapter([
-    [1, 17],
-    [3, 19],
-    [4, 20],
-    [5, 16],
-    [6, 18],
-    [8, 21],
-    [9, 15],
-    [12, 22],
-    [13, 14],
-    [16, 23],
-    [17, 12],
-    [18, 13],
-    [19, 24],
-    [20, 25],
-    [21, 10],
-    [22, 11],
-    [23, 26],
-    [24, 27],
-    [25, 8],
-    [26, 9],
-    [27, 28],
-    [28, 29],
-    [29, 6],
-    [30, 7],
-    [31, 30],
-    [32, 31],
-    [33, 4],
-    [34, 5],
-    [35, 32],
-    [36, 33],
-    [37, 2],
-    [38, 3],
-    [39, 34],
-    [40, 35]])
+
+## This is how ON1 was designed to be, but I never actually built this
+## (see below)
+#~ # This is from samtec numbers to Omnetics numbers
+#~ # This is the actual numbering on the Omnetics connector, from 1-36
+#~ samtec2omnetics = Adapters.Adapter([
+    #~ [1, 17],
+    #~ [3, 19],
+    #~ [4, 20],
+    #~ [5, 16],
+    #~ [6, 18],
+    #~ [8, 21],
+    #~ [9, 15],
+    #~ [12, 22],
+    #~ [13, 14],
+    #~ [16, 23],
+    #~ [17, 12],
+    #~ [18, 13],
+    #~ [19, 24],
+    #~ [20, 25],
+    #~ [21, 10],
+    #~ [22, 11],
+    #~ [23, 26],
+    #~ [24, 27],
+    #~ [25, 8],
+    #~ [26, 9],
+    #~ [27, 28],
+    #~ [28, 29],
+    #~ [29, 6],
+    #~ [30, 7],
+    #~ [31, 30],
+    #~ [32, 31],
+    #~ [33, 4],
+    #~ [34, 5],
+    #~ [35, 32],
+    #~ [36, 33],
+    #~ [37, 2],
+    #~ [38, 3],
+    #~ [39, 34],
+    #~ [40, 35]])
 
 ## This is for my actual adapter (ON1), which has the samtec numbering reversed
 # within each row because I put the plug on the wrong side. 
@@ -100,7 +103,7 @@ samtec2omnetics = Adapters.Adapter([
 #~ samtecflipped2omnetics1 = Adapters.Adapter(flipped_ins, flipped_outs)
 #~ samtecflipped2omnetics1.sort_by('ins')
 
-# This is just hard-coded
+## The actual adapter ON1, hard-coded
 samtecflipped2omnetics = Adapters.Adapter([
     [1, 20],
     [2, 19],
