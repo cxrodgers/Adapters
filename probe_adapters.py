@@ -5,21 +5,13 @@ import numpy as np
 
 # Not sure what this is anymore, maybe the original time that I mapped
 # out NN to Samtec to Intan instead of the individual stages as below
-"""
-# This is my NN2Intan adapter that takes us from Neuronexus numbering
-# to Intan numbering. Intan numbering is equivalent to datafile column
-# ordering, and to the GUI number - 1.
-nn2intan = Adapters.Adapter(list(range(1, 33)), [
-    19, 16, 18, 17, 20, 14, 21, 12, 22, 10, 23, 8, 15, 13, 11, 9, 6, 4,
-    2, 0, 7, 3, 5, 30, 1, 28, 31, 27, 29, 25, 26, 24]
-   )
-"""
-
-
-
-
-
-
+#~ # This is my NN2Intan adapter that takes us from Neuronexus numbering
+#~ # to Intan numbering. Intan numbering is equivalent to datafile column
+#~ # ordering, and to the GUI number - 1.
+#~ nn2intan = Adapters.Adapter(list(range(1, 33)), [
+    #~ 19, 16, 18, 17, 20, 14, 21, 12, 22, 10, 23, 8, 15, 13, 11, 9, 6, 4,
+    #~ 2, 0, 7, 3, 5, 30, 1, 28, 31, 27, 29, 25, 26, 24]
+   #~ )
 
 
 # This is for the Plexon double-neuronexus to double-omnetics connector
@@ -38,6 +30,7 @@ plexon64ch_samtec2plexonnumbers = Adapters.Adapter(
         38, 54, 6, 22, 37, 53, 5, 21, 36, 52, 4, 20, 
         35, 51, 3, 19, 34, 50, 2, 18, 33, 49, 1, 17])
 
+
 # This converts plexon numbering to Omnetics numbering. Sadly, their
 # Omnetics numbering doesn't match mine, so I'll just use mine. This is valid
 # if we line up the connectors such that the "Omnetics" logo matches.
@@ -53,13 +46,6 @@ plexon64ch_omnetics2plexonnumbers = Adapters.Adapter(
     list(range(32, 16, -1)) + list(range(1, 17)) +
     list(range(64, 48, -1)) + list(range(33, 49))
     )
-
-
-
-
-
-
-
 
 
 # This is from samtec numbers to Omnetics numbers
@@ -100,19 +86,19 @@ samtec2omnetics = Adapters.Adapter([
     [39, 34],
     [40, 35]])
 
-# This is for my actual adapter, which has the samtec numbering reversed
+## This is for my actual adapter (ON1), which has the samtec numbering reversed
 # within each row because I put the plug on the wrong side. 
 
-# This is how you can generate it
-flipped_ordering = np.concatenate([np.array([3, 2, 1, 0]) + start 
-    for start in range(1, 38, 4)])
-flipped_ins, flipped_outs = [], []
-for nidx, idx in enumerate(flipped_ordering):
-    if idx in samtec2omnetics.ins:
-        flipped_ins.append(nidx + 1)
-        flipped_outs.append(samtec2omnetics[idx])
-samtecflipped2omnetics1 = Adapters.Adapter(flipped_ins, flipped_outs)
-samtecflipped2omnetics1.sort_by('ins')
+#~ # This is how you can generate it
+#~ flipped_ordering = np.concatenate([np.array([3, 2, 1, 0]) + start 
+    #~ for start in range(1, 38, 4)])
+#~ flipped_ins, flipped_outs = [], []
+#~ for nidx, idx in enumerate(flipped_ordering):
+    #~ if idx in samtec2omnetics.ins:
+        #~ flipped_ins.append(nidx + 1)
+        #~ flipped_outs.append(samtec2omnetics[idx])
+#~ samtecflipped2omnetics1 = Adapters.Adapter(flipped_ins, flipped_outs)
+#~ samtecflipped2omnetics1.sort_by('ins')
 
 # This is just hard-coded
 samtecflipped2omnetics = Adapters.Adapter([
