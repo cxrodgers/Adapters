@@ -1,7 +1,41 @@
-"""The various adapters I've made that go from Samtec to headstage."""
+"""The various adapters I've made that go from Samtec to headstage.
+
+Samtec pin ordering:
+I always have Pin #1 in the upper left when looking at the adapter, or at
+the back side of the probe. If two Samtec connectors, the top one goes from
+1-40 and the bottom one from 41 - 80.
+
+Omnetics pin ordering:
+Looking into the headstage when it's right-side up, Pin #1 is in the bottom
+right. Pin #18 is on lower right. Pin #19 is upper right (wraps around),
+and Pin #36 is on the upper left.
+
+"""
 
 import Adapters
 import numpy as np
+
+## Adapter ON2
+ON2_samtec2omnetics = Adapters.Adapter(
+    [1, 4, 5, 8, 9, 12, 13, 16] + list(range(17, 41)) +
+    [41, 44, 45, 48, 49, 52, 53, 56] + list(range(57, 81)),
+    [   56, 53, 57, 52, 58, 51, 59, 50, # Rows 1-4 on top
+        60, 61, 49, 48, # Row 5
+        62, 63, 47, 46, # Row 6
+        64, 65, 45, 44, # Row 7
+        66, 67, 43, 42, # Row 8
+        68, 69, 41, 40, # Row 9
+        70, 71, 39, 38, # Row 10
+    ] +
+    [   20, 17, 21, 16, 22, 15, 23, 14, # Rows 1-4 on bottom
+        24, 25, 13, 12, # Row 5 
+        26, 27, 11, 10, # Row 6
+        28, 29, 9, 8, # Row 7
+        30, 31, 7, 6, # Row 8
+        32, 33, 5, 4, # Row 9
+        34, 35, 3, 2] # Row 10
+    )
+
 
 # Not sure what this is anymore, maybe the original time that I mapped
 # out NN to Samtec to Intan instead of the individual stages as below
