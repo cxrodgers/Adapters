@@ -1,4 +1,7 @@
-"""Module providing my specific adapters"""
+"""Module providing my specific adapters
+
+Actually this is all outdated now, just for my old stuff.
+"""
 from base import Adapter
 
 # Mat's adapters
