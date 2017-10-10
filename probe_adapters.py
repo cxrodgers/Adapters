@@ -38,17 +38,6 @@ ON2_samtec2omnetics = Adapters.Adapter(
     )
 
 
-# Not sure what this is anymore, maybe the original time that I mapped
-# out NN to Samtec to Intan instead of the individual stages as below
-#~ # This is my NN2Intan adapter that takes us from Neuronexus numbering
-#~ # to Intan numbering. Intan numbering is equivalent to datafile column
-#~ # ordering, and to the GUI number - 1.
-#~ nn2intan = Adapters.Adapter(list(range(1, 33)), [
-    #~ 19, 16, 18, 17, 20, 14, 21, 12, 22, 10, 23, 8, 15, 13, 11, 9, 6, 4,
-    #~ 2, 0, 7, 3, 5, 30, 1, 28, 31, 27, 29, 25, 26, 24]
-   #~ )
-
-
 # This is for the Plexon double-neuronexus to double-omnetics connector
 # Looking at the datasheet, the Samtec connectors are oriented like
 # looking into the probe. So pin 1 is in the upper right of the top connector.
@@ -83,46 +72,6 @@ plexon64ch_omnetics2plexonnumbers = Adapters.Adapter(
     )
 
 
-
-## This is how ON1 was designed to be, but I never actually built this
-## (see below)
-#~ # This is from samtec numbers to Omnetics numbers
-#~ # This is the actual numbering on the Omnetics connector, from 1-36
-#~ samtec2omnetics = Adapters.Adapter([
-    #~ [1, 17],
-    #~ [3, 19],
-    #~ [4, 20],
-    #~ [5, 16],
-    #~ [6, 18],
-    #~ [8, 21],
-    #~ [9, 15],
-    #~ [12, 22],
-    #~ [13, 14],
-    #~ [16, 23],
-    #~ [17, 12],
-    #~ [18, 13],
-    #~ [19, 24],
-    #~ [20, 25],
-    #~ [21, 10],
-    #~ [22, 11],
-    #~ [23, 26],
-    #~ [24, 27],
-    #~ [25, 8],
-    #~ [26, 9],
-    #~ [27, 28],
-    #~ [28, 29],
-    #~ [29, 6],
-    #~ [30, 7],
-    #~ [31, 30],
-    #~ [32, 31],
-    #~ [33, 4],
-    #~ [34, 5],
-    #~ [35, 32],
-    #~ [36, 33],
-    #~ [37, 2],
-    #~ [38, 3],
-    #~ [39, 34],
-    #~ [40, 35]])
 
 ## This is for my actual adapter (ON1), which has the samtec numbering reversed
 # within each row because I put the plug on the wrong side. 
