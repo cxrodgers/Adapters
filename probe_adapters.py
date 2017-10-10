@@ -7,8 +7,9 @@ the back side of the probe. If two Samtec connectors, the top one goes from
 
 Omnetics pin ordering:
 Looking into the headstage when it's right-side up, Pin #1 is in the bottom
-right. Pin #18 is on lower right. Pin #19 is upper right (wraps around),
-and Pin #36 is on the upper left.
+right. Pin #18 is on lower left. Pin #19 is upper left (wraps around),
+and Pin #36 is on the upper right. If two Omnetics connectors, the first
+goes from 1-36 and the second goes from 37-72.
 
 """
 
