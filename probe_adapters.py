@@ -45,6 +45,10 @@ ON4_level1_internal = [
     41, 44, 53, 56, 42, 43, 54, 55, # Bottom rows 9-10
 ]
 
+# A mapping between samtec pins and neuronexus pins
+ON4_samtec2nn = Adapters.Adapter(ON4_level0_samtec, ON4_level1_internal)
+
+
 # Now we want the level 2 numbers, which are the Omnetics pin numbers
 # ordered as above (Samtec ordering). Annoying to read this off the
 # datasheet, it's easier to read the internal pin numbers in the Omnetics

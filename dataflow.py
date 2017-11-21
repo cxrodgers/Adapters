@@ -14,7 +14,9 @@ from probes import \
     samtec2nn, \
     samtec2janelia_top, \
     samtec2janelia_bottom, \
-    samtec2janelia_64ch
+    samtec2janelia_64ch, \
+    adrian_8shank2interposer, \
+    interposer2samtec_shifted
     
 from headstages import \
     intan2gui, \
@@ -30,13 +32,16 @@ from channels import \
     janelia_sort_by_depth, \
     janelia_depth_df
 
-# Construct the entire dataflow
+## Construct the entire dataflow
+# Neuronexus probes
 dataflow_poly2 = (
     samtec2nn.inv + samtecflipped2omnetics + omnetics2intan + intan2gui).sort_by(
     poly2_NN_sort_by_depth)
 dataflow_edge = (
     samtec2nn.inv + samtecflipped2omnetics + omnetics2intan + intan2gui).sort_by(
     edge_NN_sort_by_depth)
+
+# Janelia top and bottom
 dataflow_janelia_top = (
     samtec2janelia_top.inv + 
     samtecflipped2omnetics + 
@@ -50,6 +55,7 @@ dataflow_janelia_bottom = (
     intan2gui
     ).sort_by(janelia_bottom_sort_by_depth)
 
+# Janelia Plexon adapter
 dataflow_janelia_64ch_plexon = (
     samtec2janelia_64ch.inv + 
     plexon64ch_samtec2plexonnumbers + 
@@ -58,6 +64,7 @@ dataflow_janelia_64ch_plexon = (
     intan2gui_64ch
     ).sort_by(janelia_sort_by_depth)
 
+# Janelia ON2 and ON4
 dataflow_janelia_64ch_ON2 = (
     samtec2janelia_64ch.inv + 
     ON2_samtec2omnetics + 
@@ -71,6 +78,15 @@ dataflow_janelia_64ch_ON4 = (
     omnetics2intan_64ch + 
     intan2gui_64ch
     ).sort_by(janelia_sort_by_depth)
+
+# Adrian
+dataflow_adrian = (
+    adrian_8shank2interposer + 
+    interposer2samtec_shifted + 
+    ON4_samtec2omnetics + 
+    omnetics2intan_64ch + 
+    intan2gui_64ch
+    )
 
 
 # Dataframe it
@@ -88,6 +104,8 @@ dataflow_janelia_64ch_ON2_df = pandas.DataFrame(dataflow_janelia_64ch_ON2.table,
     columns=['J', 'Sam', 'Om', 'Int', 'GUI'], dtype=np.int)
 dataflow_janelia_64ch_ON4_df = pandas.DataFrame(dataflow_janelia_64ch_ON4.table,
     columns=['J', 'Sam', 'Om', 'Int', 'GUI'], dtype=np.int)
+dataflow_adrian_df = pandas.DataFrame(dataflow_adrian.table,
+    columns=['E', 'Interp', 'Sam', 'Om', 'Int', 'GUI'], dtype=np.int)
 
 # Join a depth column
 dataflow_poly2_df['Z'] = list(range(0, 32 * 25, 25))
