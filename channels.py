@@ -20,6 +20,14 @@ edge_NN_sort_by_depth = [
     32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 
     16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
+# Cambridge NeuroTech H3
+h3_sort_by_depth = [
+    64, 62, 60, 58, 56, 54, 52, 50, 34, 51, 53, 55, 57, 59, 61, 63, 
+    44, 42, 41, 35, 36, 49, 47, 45, 38, 46, 48, 40, 39, 33, 37, 43,
+    21, 23, 24, 30, 29, 16, 18, 20, 27, 19, 17, 25, 26, 32, 28, 22, 
+    1, 3, 5, 7, 9, 11, 13, 15, 31, 14, 12, 10, 8, 6, 4, 2,
+]
+
 # Janelia probe channels, sorted by depth
 janelia_sort_by_depth = (
     list(range(1, 24)) + [28, 24, 32, 25, 29, 26, 30, 27, 31] + 
@@ -39,3 +47,7 @@ janelia_bottom_sort_by_depth = [ch for ch in janelia_sort_by_depth
 janelia_depth_df = pandas.DataFrame.from_dict(
     {'J': janelia_sort_by_depth})
 janelia_depth_df['Z'] = np.arange(0, 64 * 20, 20, dtype=np.int)
+
+h3_depth_df = pandas.DataFrame.from_dict(
+    {'Prb': h3_sort_by_depth})
+h3_depth_df['Z'] = np.arange(0, 64 * 20, 20, dtype=np.int)
