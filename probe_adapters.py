@@ -47,9 +47,6 @@ ON2_samtec2omnetics = Adapters.Adapter(
     #~ 2, 0, 7, 3, 5, 30, 1, 28, 31, 27, 29, 25, 26, 24]
    #~ )
 
-## Neuronexus A64-OM32x2
-
-
 
 # This is for the Plexon double-neuronexus to double-omnetics connector
 # Looking at the datasheet, the Samtec connectors are oriented like
