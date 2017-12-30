@@ -7,13 +7,100 @@ the back side of the probe. If two Samtec connectors, the top one goes from
 
 Omnetics pin ordering:
 Looking into the headstage when it's right-side up, Pin #1 is in the bottom
-right. Pin #18 is on lower right. Pin #19 is upper right (wraps around),
-and Pin #36 is on the upper left.
+right. Pin #18 is on lower left. Pin #19 is upper left (wraps around),
+and Pin #36 is on the upper right. If two Omnetics connectors, the first
+goes from 1-36 and the second goes from 37-72.
 
 """
 
 import Adapters
 import numpy as np
+
+def inclusive_list(start, stop):
+    """Return a list that goes from start to stop inclusively, not Pythonically
+    
+    """
+    return list(range(start, stop + 1))
+
+## Adapter ON4
+# This is the Neuronexus A64-OM32x2 Adaptor
+# level 0 : Canonical Samtec ordering, looking into adaptor, top connector
+# pins 1-40, bottom connector pins 41-80.
+# level 1 : Internal Neuronexus pin numbering
+# level 2 : Canonical Omnetics pin numbering
+#   right headstage is pins 1-36, left is pins 37-72
+#   This is because I know I will plug the first Intan headstage into the
+#   right Omnetics connector.
+ON4_level0_samtec = inclusive_list(1, 80)
+ON4_level1_internal = [
+    1, 'G', 'G', 32, 2, 'R', 'R', 31, # Top rows 1-2
+    3, 'NC', 'NC', 30, 4, 'NC', 'NC', 29, # Top rows 3-4
+    5, 16, 17, 28, 6, 15, 18, 27, # Top rows 5-6
+    7, 14, 19, 26, 8, 13, 20, 25, # Top rows 7-8
+    9, 12, 21, 24, 10, 11, 22, 23, # Top rows 9-10
+    33, 'G', 'G', 64, 34, 'R', 'R', 63, # Bottom rows 1-2
+    35, 'NC', 'NC', 62, 36, 'NC', 'NC', 61,
+    37, 48, 49, 60, 38, 47, 50, 59, 
+    39, 46, 51, 58, 40, 45, 52, 57, 
+    41, 44, 53, 56, 42, 43, 54, 55, # Bottom rows 9-10
+]
+
+# A mapping between samtec pins and neuronexus pins
+ON4_samtec2nn = Adapters.Adapter(ON4_level0_samtec, ON4_level1_internal)
+
+
+# Now we want the level 2 numbers, which are the Omnetics pin numbers
+# ordered as above (Samtec ordering). Annoying to read this off the
+# datasheet, it's easier to read the internal pin numbers in the Omnetics
+# ordering, then invert it, then convert each internal number in 
+# ON4_level1_internal to an Omnetics number.
+
+# Read this directly off datasheet: internal pin numbers, in the Omnetics
+# ordering. That is, bottom row right headstage, top row right headstage, 
+# bottom row left headstage, top row left headstage, using the standard 
+# Omnetics wraparound.
+ON4_internal_ordered_by_omnetics = [
+    'G1', 55, 54, 56, 53, 57, 52, 58, 51, 59, 50, 60, 49, 61, 62, 63, 64, 'PR1',
+    'G2', 32, 31, 30, 29, 17, 28, 18, 27, 19, 26, 20, 25, 21, 24, 22, 23, 'HR2',
+    'G3', 33, 34, 35, 36, 48, 37, 47, 38, 46, 39, 45, 40, 44, 41, 43, 42, 'PR3',
+    'G4', 10, 11, 9, 12, 8, 13, 7, 14, 6, 15, 5, 16, 4, 3, 2, 1, 'HR4',
+]
+
+# Intermediate adapter just to conver those omnetics numbers to internal.
+ON4_omnetics2internal = Adapters.Adapter(
+    inclusive_list(1, 72),
+    ON4_internal_ordered_by_omnetics)
+
+# Invert the intermediate adapter and take the omnetics pins in the ordering
+# of ON4_level1_internal
+ON4_level2_omnetics = []
+for internal_pin in ON4_level1_internal:
+    # Try to invert the mapping to get the omnetics pin
+    try:
+        omnetics_pin = ON4_omnetics2internal.out2in[internal_pin]
+    except KeyError:
+        # e.g., 'HR' or whatever
+        omnetics_pin = 'X'
+
+    ON4_level2_omnetics.append(omnetics_pin)
+
+# Finally, drop all non-integer values from each list
+ON4_inputs_samtec = []
+ON4_outputs_omnetics = []
+assert len(ON4_level0_samtec) == 80
+assert len(ON4_level1_internal) == 80
+assert len(ON4_level2_omnetics) == 80
+zobj = zip(ON4_level0_samtec, ON4_level1_internal, ON4_level2_omnetics)
+for val0, val1, val2 in zobj:
+    if type(val0) is str or type(val1) is str or type(val2) is str:
+        continue
+    else:
+        ON4_inputs_samtec.append(val0)
+        ON4_outputs_omnetics.append(val2)
+
+# Generate the adapter
+ON4_samtec2omnetics = Adapters.Adapter(ON4_inputs_samtec, ON4_outputs_omnetics)
+    
 
 ## Adapter ON2
 ON2_samtec2omnetics = Adapters.Adapter(
@@ -35,17 +122,6 @@ ON2_samtec2omnetics = Adapters.Adapter(
         32, 33, 5, 4, # Row 9
         34, 35, 3, 2] # Row 10
     )
-
-
-# Not sure what this is anymore, maybe the original time that I mapped
-# out NN to Samtec to Intan instead of the individual stages as below
-#~ # This is my NN2Intan adapter that takes us from Neuronexus numbering
-#~ # to Intan numbering. Intan numbering is equivalent to datafile column
-#~ # ordering, and to the GUI number - 1.
-#~ nn2intan = Adapters.Adapter(list(range(1, 33)), [
-    #~ 19, 16, 18, 17, 20, 14, 21, 12, 22, 10, 23, 8, 15, 13, 11, 9, 6, 4,
-    #~ 2, 0, 7, 3, 5, 30, 1, 28, 31, 27, 29, 25, 26, 24]
-   #~ )
 
 
 # This is for the Plexon double-neuronexus to double-omnetics connector
@@ -82,46 +158,6 @@ plexon64ch_omnetics2plexonnumbers = Adapters.Adapter(
     )
 
 
-
-## This is how ON1 was designed to be, but I never actually built this
-## (see below)
-#~ # This is from samtec numbers to Omnetics numbers
-#~ # This is the actual numbering on the Omnetics connector, from 1-36
-#~ samtec2omnetics = Adapters.Adapter([
-    #~ [1, 17],
-    #~ [3, 19],
-    #~ [4, 20],
-    #~ [5, 16],
-    #~ [6, 18],
-    #~ [8, 21],
-    #~ [9, 15],
-    #~ [12, 22],
-    #~ [13, 14],
-    #~ [16, 23],
-    #~ [17, 12],
-    #~ [18, 13],
-    #~ [19, 24],
-    #~ [20, 25],
-    #~ [21, 10],
-    #~ [22, 11],
-    #~ [23, 26],
-    #~ [24, 27],
-    #~ [25, 8],
-    #~ [26, 9],
-    #~ [27, 28],
-    #~ [28, 29],
-    #~ [29, 6],
-    #~ [30, 7],
-    #~ [31, 30],
-    #~ [32, 31],
-    #~ [33, 4],
-    #~ [34, 5],
-    #~ [35, 32],
-    #~ [36, 33],
-    #~ [37, 2],
-    #~ [38, 3],
-    #~ [39, 34],
-    #~ [40, 35]])
 
 ## This is for my actual adapter (ON1), which has the samtec numbering reversed
 # within each row because I put the plug on the wrong side. 
