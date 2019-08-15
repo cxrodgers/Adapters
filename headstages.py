@@ -25,8 +25,23 @@ omnetics2intan_64ch = Adapters.Adapter(
     ],
     )
 
+# This is the 64-channel Intan headstage RHD2164
+# (not the double 32-channel stuff above)
+# http://intantech.com/RHD2164_amp_board.html
+# I read these numbers off the image in the standard direction: Look into
+# the bottom headstage, start on bottom right, proceed clockwise, end on 
+# top right. Repeat for top headstage.
+omnetics2rhd2164 = Adapters.Adapter(
+    list(range(1, 73)), [
+    'GND', 14, 12, 10, 8, 6, 4, 2, 0, 62, 60, 58, 56, 54, 52, 50, 48, 'REF',
+    'GND', 49, 51, 53, 55, 57, 59, 61, 63, 1, 3, 5, 7, 9, 11, 13, 15, 'REF',
+    'GND', 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 'REF',
+    'GND', 46, 44, 42, 40, 38, 36, 34, 32, 30, 28, 26, 24, 22, 20, 18, 16, 'REF',
+    ],
+)    
 
 
+## GUI numbers
 # The GUI numbers are 1 + the intan numbers
 # This is used for making the channel mapping
 intan2gui = Adapters.Adapter(list(range(36)), list(range(1, 37)))

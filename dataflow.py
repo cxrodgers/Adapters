@@ -8,7 +8,8 @@ from probe_adapters import \
     plexon64ch_samtec2plexonnumbers, \
     plexon64ch_omnetics2plexonnumbers, \
     ON2_samtec2omnetics, \
-    ON4_samtec2omnetics
+    ON4_samtec2omnetics, \
+    A64OM32x2sm_samtec2omnetics
 
 from probes import \
     samtec2nn, \
@@ -22,7 +23,8 @@ from headstages import \
     intan2gui, \
     omnetics2intan, \
     omnetics2intan_64ch, \
-    intan2gui_64ch
+    intan2gui_64ch, \
+    omnetics2rhd2164
 
 from channels import \
     poly2_NN_sort_by_depth, \
@@ -31,6 +33,7 @@ from channels import \
     janelia_bottom_sort_by_depth, \
     janelia_sort_by_depth, \
     janelia_depth_df, \
+    h3_sort_by_depth, \
     h3_depth_df
 
 ## Construct the entire dataflow
@@ -80,6 +83,14 @@ dataflow_janelia_64ch_ON4 = (
     intan2gui_64ch
     ).sort_by(janelia_sort_by_depth)
 
+# Helen's A64OM32x2sm and rhd2164 dataflow
+dataflow_helen_64ch = (
+    samtec2janelia_64ch.inv + # Defines ordering within the Samtec
+    A64OM32x2sm_samtec2omnetics + # Samtec to Omnetics
+    omnetics2rhd2164 + # Omnetics to Intan headstage
+    intan2gui_64ch # Intan to GUI numbers
+    ).sort_by(h3_sort_by_depth) # Sorts by H3 depth and excludes NC
+
 # Adrian
 dataflow_adrian = (
     adrian_8shank2interposer + 
@@ -113,6 +124,10 @@ dataflow_adrian_df = pandas.DataFrame(dataflow_adrian.table,
 dataflow_h3_ON4_df = pandas.DataFrame(dataflow_janelia_64ch_ON4.table.copy(),
     columns=['Prb', 'Sam', 'Om', 'Int', 'GUI'], dtype=np.int)
 
+# Construct the Helen dataflow
+dataflow_helen_64ch_df = pandas.DataFrame(dataflow_helen_64ch.table,
+    columns=['Prb', 'Sam', 'Om', 'Int', 'GUI'], dtype=np.int)
+
 # Join a depth column
 # For Janelia and H3, this also inserts channel numbers
 dataflow_poly2_df['Z'] = list(range(0, 32 * 25, 25))
@@ -130,17 +145,25 @@ dataflow_janelia_64ch_ON4_df = dataflow_janelia_64ch_ON4_df.join(
 dataflow_h3_ON4_df = dataflow_h3_ON4_df.join(
     h3_depth_df.set_index('Prb'), on='Prb')
 
+# Join depth column on Helen
+dataflow_helen_64ch_df = dataflow_helen_64ch_df.join(
+    h3_depth_df.set_index('Prb'), on='Prb')
+    
+
 ## Sort by depth
 dataflow_h3_ON4_df = dataflow_h3_ON4_df.sort_values('Z')
 dataflow_h3_ON4_df.index = np.arange(len(dataflow_h3_ON4_df), dtype=np.int)
 
-# I don't why this step isn't necessary for the janelia ones
+# This isn't necessary for the Janelia ones because they were sorted above
 assert np.all(
     np.sort(dataflow_janelia_64ch_ON2_df['Z'].values) == 
     dataflow_janelia_64ch_ON4_df['Z'].values)
 assert np.all(
     np.sort(dataflow_janelia_64ch_ON2_df['Z'].values) == 
     dataflow_janelia_64ch_ON4_df['Z'].values)
+assert np.all(
+    np.sort(dataflow_helen_64ch_df['Z'].values) == 
+    dataflow_helen_64ch_df['Z'].values)
 
 # Join a Sorted column, which is 1+index after we've sorted by depth
 dataflow_janelia_64ch_ON2_df.insert(dataflow_janelia_64ch_ON2_df.shape[1],
@@ -152,4 +175,6 @@ dataflow_janelia_64ch_ON4_df.insert(dataflow_janelia_64ch_ON4_df.shape[1],
 dataflow_h3_ON4_df.insert(dataflow_h3_ON4_df.shape[1],
     'Srt',
     dataflow_h3_ON4_df.index.values + 1)
-    
+dataflow_helen_64ch_df.insert(dataflow_helen_64ch_df.shape[1],
+    'Srt',
+    dataflow_helen_64ch_df.index.values + 1)

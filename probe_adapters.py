@@ -22,6 +22,7 @@ def inclusive_list(start, stop):
     """
     return list(range(start, stop + 1))
 
+
 ## Adapter ON4
 # This is the Neuronexus A64-OM32x2 Adaptor
 # level 0 : Canonical Samtec ordering, looking into adaptor, top connector
@@ -100,7 +101,99 @@ for val0, val1, val2 in zobj:
 
 # Generate the adapter
 ON4_samtec2omnetics = Adapters.Adapter(ON4_inputs_samtec, ON4_outputs_omnetics)
-    
+
+
+## Adapter A64-OM32x2-sm
+# https://neuronexus.com/wp-content/uploads/2018/09/Adpt-A64-OM32x2-sm-20180307.pdf
+# Borrowed from Helen once
+
+# Level 0 Samtec numbers
+A64OM32x2sm_level0_samtec = inclusive_list(1, 80)
+
+# Level 1
+# Read this off the datasheet
+# They are the little numbers printed inside the schematic of the Samtecs
+# Top row (left to right), second row, ..., bottom row
+# No ground or reference is marked here, not that it matters I guess
+A64OM32x2sm_level1_internal = [
+    24, 'NC', 'NC', 41, 27, 'NC', 'NC', 38, # Top rows 1-2
+    22, 'NC', 'NC', 43, 28, 'NC', 'NC', 37,
+    29, 26, 39, 36, 20, 25, 40, 45, 
+    18, 23, 42, 47, 16, 21, 44, 49, 
+    14, 19, 46, 51, 12, 17, 48, 53, 
+    10, 'NC', 'NC', 55, 15, 'NC', 'NC', 50, # Bottom rows 1-2
+    8, 'NC', 'NC', 57, 13, 'NC', 'NC', 52,
+    6, 11, 54, 59, 4, 5, 60, 61, 
+    9, 32, 33, 56, 2, 3, 62, 63, 
+    7, 30, 35, 58, 1, 31, 34, 64, # Bottom rows 9-10
+]
+
+# A mapping between samtec pins and neuronexus pins
+A64OM32x2sm_samtec2nn = Adapters.Adapter(
+    A64OM32x2sm_level0_samtec, A64OM32x2sm_level1_internal)
+
+# Now we want the level 2 numbers, which are the Omnetics pin numbers
+# ordered as above (Samtec ordering). Annoying to read this off the
+# datasheet, it's easier to read the internal pin numbers in the Omnetics
+# ordering, then invert it, then convert each internal number in 
+# level1_internal to an Omnetics number.
+
+# Read this off the adapter datasheet: internal pin numbers, in the Omnetics
+# ordering. I'll define the Omnetics ordering as follows: Looking into the
+# headstage, start with bottom right pin on bottom headstage. Proceed
+# clockwise, ending with the upper right bin. Then repeat for top headstage.
+# The important thing is that this is consistent with the numbering for
+# the mating 64-channel headstage in headstages.py.
+#
+# Because the datasheet is looking out of the headstage, it's actually bottom
+# left proceeding counter-clockwise to upper left.
+A64OM32x2sm_internal_ordered_by_omnetics = [
+    'G1', 48, 46, 44, 42, 40, 39, 43, 41, 24, 22, 26, 25, 23, 21, 19, 17, 'PR1',
+    'G2', 12, 14, 16, 18, 20, 29, 28, 27, 38, 37, 36, 45, 47, 49, 51, 53, 'PR2',
+    'G3', 64, 58, 63, 56, 61, 59, 52, 50, 15, 13, 6, 4, 9, 2, 7, 1, 'HR3',
+    'G4', 31, 30, 3, 32, 5, 11, 8, 10, 55, 57, 54, 60, 33, 62, 35, 34, 'HR4',
+]
+
+# Intermediate adapter just to conver those omnetics numbers to internal.
+A64OM32x2sm_omnetics2internal = Adapters.Adapter(
+    inclusive_list(1, 72),
+    A64OM32x2sm_internal_ordered_by_omnetics)
+
+# Invert the intermediate adapter and take the omnetics pins in the ordering
+# of ON4_level1_internal
+A64OM32x2sm_level2_omnetics = []
+for internal_pin in A64OM32x2sm_level1_internal:
+    # Try to invert the mapping to get the omnetics pin
+    try:
+        omnetics_pin = A64OM32x2sm_omnetics2internal.out2in[internal_pin]
+    except KeyError:
+        # e.g., 'HR' or whatever
+        omnetics_pin = 'X'
+
+    A64OM32x2sm_level2_omnetics.append(omnetics_pin)
+
+# Finally, drop all non-integer values from each list
+A64OM32x2sm_inputs_samtec = []
+A64OM32x2sm_outputs_omnetics = []
+assert len(A64OM32x2sm_level0_samtec) == 80
+assert len(A64OM32x2sm_level1_internal) == 80
+assert len(A64OM32x2sm_level2_omnetics) == 80
+zobj = zip(
+    A64OM32x2sm_level0_samtec, 
+    A64OM32x2sm_level1_internal, 
+    A64OM32x2sm_level2_omnetics,
+)
+for val0, val1, val2 in zobj:
+    if type(val0) is str or type(val1) is str or type(val2) is str:
+        continue
+    else:
+        A64OM32x2sm_inputs_samtec.append(val0)
+        A64OM32x2sm_outputs_omnetics.append(val2)
+
+# Generate the adapter
+A64OM32x2sm_samtec2omnetics = Adapters.Adapter(
+    A64OM32x2sm_inputs_samtec, A64OM32x2sm_outputs_omnetics)
+
 
 ## Adapter ON2
 ON2_samtec2omnetics = Adapters.Adapter(
@@ -158,9 +251,8 @@ plexon64ch_omnetics2plexonnumbers = Adapters.Adapter(
     )
 
 
-
 ## This is for my actual adapter (ON1), which has the samtec numbering reversed
-# within each row because I put the plug on the wrong side. 
+## within each row because I put the plug on the wrong side. 
 
 #~ # This is how you can generate it
 #~ flipped_ordering = np.concatenate([np.array([3, 2, 1, 0]) + start 
