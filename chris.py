@@ -2,7 +2,8 @@
 
 Actually this is all outdated now, just for my old stuff.
 """
-from base import Adapter
+from __future__ import absolute_import
+from .base import Adapter
 
 # Mat's adapters
 hd5a_hdmi2dip = Adapter(

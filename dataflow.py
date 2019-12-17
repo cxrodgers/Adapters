@@ -1,9 +1,10 @@
 """Complete flow of data, from probe to adapter to headstage."""
+from __future__ import absolute_import
 
 import pandas
 import numpy as np
 
-from probe_adapters import \
+from .probe_adapters import \
     samtecflipped2omnetics, \
     plexon64ch_samtec2plexonnumbers, \
     plexon64ch_omnetics2plexonnumbers, \
@@ -11,7 +12,7 @@ from probe_adapters import \
     ON4_samtec2omnetics, \
     A64OM32x2sm_samtec2omnetics
 
-from probes import \
+from .probes import \
     samtec2nn, \
     samtec2janelia_top, \
     samtec2janelia_bottom, \
@@ -19,14 +20,14 @@ from probes import \
     adrian_8shank2interposer, \
     interposer2samtec_shifted
     
-from headstages import \
+from .headstages import \
     intan2gui, \
     omnetics2intan, \
     omnetics2intan_64ch, \
     intan2gui_64ch, \
     omnetics2rhd2164
 
-from channels import \
+from .channels import \
     poly2_NN_sort_by_depth, \
     edge_NN_sort_by_depth, \
     janelia_top_sort_by_depth, \

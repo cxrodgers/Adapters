@@ -1,4 +1,5 @@
 """Module providing Adapter object."""
+from __future__ import print_function
 import numpy as np
 
 
@@ -68,7 +69,7 @@ class Adapter:
                 if i1 is None:
                     continue
                 if i1 in res:
-                    print "warning: duplicate keys in 'in' column"
+                    print("warning: duplicate keys in 'in' column")
                 res[i1] = i2
             self._in2out = res
         return self._in2out
@@ -83,7 +84,7 @@ class Adapter:
                 if i1 is None:
                     continue
                 if i1 in res:
-                    print "warning: duplicate keys in 'out' column"
+                    print("warning: duplicate keys in 'out' column")
                 res[i1] = i2
             self._out2in = res
         return self._out2in

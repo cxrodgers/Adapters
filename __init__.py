@@ -11,15 +11,16 @@ headstages : the mapping onto Intan stuff
 dataflow : constructing the complete flow of channels from probe to
     headstage
 """
+from __future__ import absolute_import
 
-from base import Adapter
-import channels
+from .base import Adapter
+from . import channels
 reload(channels)
-import probe_adapters
+from . import probe_adapters
 reload(probe_adapters)
-import probes
+from . import probes
 reload(probes)
-import headstages
+from . import headstages
 reload(headstages)
-import dataflow
+from . import dataflow
 reload(dataflow)
