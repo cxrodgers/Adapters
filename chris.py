@@ -3,6 +3,7 @@
 Actually this is all outdated now, just for my old stuff.
 """
 from __future__ import absolute_import
+from builtins import range
 from .base import Adapter
 
 # Mat's adapters

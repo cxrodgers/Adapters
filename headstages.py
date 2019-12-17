@@ -1,6 +1,7 @@
 """Info about my headstage and GUI channel mapping"""
 
 
+from builtins import range
 import Adapters
 
 # This converts ordinal numbered Omnetics pins to Intan numbers using the

@@ -13,6 +13,8 @@ goes from 1-36 and the second goes from 37-72.
 
 """
 
+from builtins import zip
+from builtins import range
 import Adapters
 import numpy as np
 
@@ -91,7 +93,7 @@ ON4_outputs_omnetics = []
 assert len(ON4_level0_samtec) == 80
 assert len(ON4_level1_internal) == 80
 assert len(ON4_level2_omnetics) == 80
-zobj = zip(ON4_level0_samtec, ON4_level1_internal, ON4_level2_omnetics)
+zobj = list(zip(ON4_level0_samtec, ON4_level1_internal, ON4_level2_omnetics))
 for val0, val1, val2 in zobj:
     if type(val0) is str or type(val1) is str or type(val2) is str:
         continue
@@ -178,11 +180,11 @@ A64OM32x2sm_outputs_omnetics = []
 assert len(A64OM32x2sm_level0_samtec) == 80
 assert len(A64OM32x2sm_level1_internal) == 80
 assert len(A64OM32x2sm_level2_omnetics) == 80
-zobj = zip(
+zobj = list(zip(
     A64OM32x2sm_level0_samtec, 
     A64OM32x2sm_level1_internal, 
     A64OM32x2sm_level2_omnetics,
-)
+))
 for val0, val1, val2 in zobj:
     if type(val0) is str or type(val1) is str or type(val2) is str:
         continue

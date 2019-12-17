@@ -1,5 +1,6 @@
 """Pinout for each probe, from channel numbers to Samtec numbers."""
 
+from builtins import range
 import Adapters
 
 ## This is for Adrian's 1x8 shank array

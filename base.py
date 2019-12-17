@@ -1,9 +1,12 @@
 """Module providing Adapter object."""
 from __future__ import print_function
+from builtins import str
+from builtins import zip
+from builtins import object
 import numpy as np
 
 
-class Adapter:
+class Adapter(object):
     """Object representing inputs and outputs of a physical adapter.
     
     An Adapter is intialized with lists of all the input channels and
