@@ -15,12 +15,7 @@ from __future__ import absolute_import
 
 from .base import Adapter
 from . import channels
-reload(channels)
 from . import probe_adapters
-reload(probe_adapters)
 from . import probes
-reload(probes)
 from . import headstages
-reload(headstages)
 from . import dataflow
-reload(dataflow)
