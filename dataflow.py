@@ -11,7 +11,12 @@ from .probe_adapters import \
     plexon64ch_omnetics2plexonnumbers, \
     ON2_samtec2omnetics, \
     ON4_samtec2omnetics, \
-    A64OM32x2sm_samtec2omnetics
+    A64OM32x2sm_samtec2omnetics, \
+    wire64_eib_numbers2names, \
+    wire64_slimstack2headstage, \
+    wire64_eib_names2headstage, \
+    nza_SSB6_64, \
+    nanoz_mux2samtec
 
 from .probes import \
     samtec2nn, \
@@ -39,6 +44,19 @@ from .channels import \
     h3_depth_df
 
 ## Construct the entire dataflow
+# for wire64
+wire64_big_dataflow = pandas.DataFrame((
+    wire64_eib_numbers2names + # enum to ename
+    wire64_eib_names2headstage +  # ename to hs
+    nza_SSB6_64.inv + # hs to mux
+    nanoz_mux2samtec # mux to samtec
+    ).table, 
+    columns=['enum', 'ename', 'hs', 'mux', 'samtec'])
+
+wire64_big_dataflow = wire64_big_dataflow.join(
+    pandas.DataFrame(wire64_slimstack2headstage.table, 
+    columns=['slimstack', 'hs']).set_index('hs'), on='hs')
+   
 # Neuronexus probes
 dataflow_poly2 = (
     samtec2nn.inv + samtecflipped2omnetics + omnetics2intan + intan2gui).sort_by(

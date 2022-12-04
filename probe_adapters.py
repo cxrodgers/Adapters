@@ -25,6 +25,108 @@ def inclusive_list(start, stop):
     return list(range(start, stop + 1))
 
 
+## wire64 EIB
+# This is the White Matter EIB
+# level 0 : EIB hole numbers. I made up this ordering, but it's meant to
+#   match the White Matter ordering, so it starts with the left-most column
+#   (as you are looking down at the connector side, with the connector up),
+#   labels the holes from top to bottom, and then proceeds to columns on the 
+#   right. That is, it starts with the A1-D1 tetrode and ends with A16-D16.
+#   This will be 0-based even though everything else here is 1-based.
+# level 1 : EIB hole names. These are taken from the White Matter image.
+#   Importantly, I call it eg "A01" instead of "A1", so they're all length 3.
+
+# level 0
+wire64_level0_eib_numbers = list(range(64))
+
+# level 1
+wire64_level1_eib_names = []
+for column_number in inclusive_list(1, 16):
+    for row_name in inclusive_list(ord('A'), ord('D')):
+        name = '{}{:02}'.format(chr(row_name), column_number)
+        wire64_level1_eib_names.append(name)
+
+# Create adaptor
+wire64_eib_numbers2names = Adapters.Adapter(
+    wire64_level0_eib_numbers,
+    wire64_level1_eib_names)
+
+# This relates eib hole name to headstage channel number
+# Thse are taken directly from the spreadsheet from Tim, except I added
+# a zero before the number to make it sort more nicely.
+# I assume these  reflect the ordering of the channels in the data files 
+# saved by WM, as well as the order they are displayed in Open Ephys, 
+# as well as the ordering of the channels in the nanoZ when using Tim's 
+# "NZA SSB-64" addition to the electrodes.ini config file.
+wire64_eib_names_sorted_by_hs = [
+    'B01', 'C05', 'C01', 'A05', 'A01', 'D05', 'B05', 'D01', 
+    'A02', 'A06', 'C06', 'C02', 'B06', 'B02', 'D06', 'A07', 
+    'D02', 'A03', 'B07', 'C07', 'C03', 'A08', 'B03', 'D07', 
+    'B08', 'A04', 'A09', 'C08', 'D03', 'B09', 'B04', 'D08', 
+    'A10', 'C04', 'A13', 'B10', 'C09', 'D04', 'A11', 'B13', 
+    'D09', 'B11', 'D13', 'B14', 'A12', 'C10', 'C13', 'B12', 
+    'A14', 'C14', 'D16', 'D10', 'A15', 'C11', 'D14', 'A16', 
+    'D11', 'C15', 'B15', 'D15', 'C12', 'B16', 'D12', 'C16', 
+    ]
+wire64_eib_names2headstage = Adapters.Adapter(
+    wire64_eib_names_sorted_by_hs,
+    inclusive_list(1, 64))
+
+
+## slimstack2headstage
+#   SlimStack channel numbers. These are the pins on the SlimStack
+#   connector on the EIB. I don't actually know what these are yet, because
+#   I can only see the top side on Tim's image. I also don't know how SlimStack
+#   numbers the pins. I have faked this numbering for now, by assuming that they
+#   are in the same order as the headstage numbers (which is not true). 
+#   They are labeled top_00 to top_31, and bot_00 to bot_31, corresponding
+#   to the upper and lower SlimStack connectors, going first from left to right
+#   and then from top to bottom.
+wire64_slimstack_sorted_by_hs = (
+    ['top_{:02d}'.format(num) for num in range(32)] + 
+    ['bot_{:02d}'.format(num) for num in range(32)]
+    )
+
+wire64_slimstack2headstage = Adapters.Adapter(
+    wire64_slimstack_sorted_by_hs,
+    inclusive_list(1, 64))
+
+
+## NZA SSB-64
+# This is inferred from NZA-SSB6r2-adaptor-map.ini from Tim
+# I assume these MUX numbers are in the same order as the headstage channels
+# So I extracted the MUX numbers, and map them to inclusive_list(1, 64)
+mux_sorted_by_headstage = [
+     1, 57, 42, 10,  2, 33,  9, 41,  3, 12, 34, 44, 11,  4, 35, 14, 
+    43,  6, 13, 36, 46, 16,  5, 38, 15,  8, 24, 37, 48, 23, 7, 40, 
+    22, 45, 32, 21, 39, 47, 20, 31, 64, 19, 54, 30, 18, 63, 56, 17, 
+    29, 55, 49, 62, 27, 61, 53, 26, 60, 52, 28, 51, 59, 25, 58, 50, 
+]
+nza_SSB6_64 = Adapters.Adapter(
+    mux_sorted_by_headstage,
+    inclusive_list(1, 64))
+
+
+## nanoZ mux mapping
+# This is taken from the image from the nanoZ manual
+# I made the NC each unique to avoid warnings
+nanoZ_mux_numbers = [
+      25,'N1', 'G',   1,  26,'N2','N3',   2,
+      27,'N4','N5',   3,  28,'N6','N7',   4,
+      29,  30,   5,   6,  31,  32,   7,   8,
+      17,  18,   9,  10,  19,  20,  11,  12,
+      21,  22,  13,  14,  23,  24,  15,  16,
+      57,'N8', 'G',  33,  58,'N9','NA',  34,
+      59,'NB','NC',  35,  60,'ND','NE',  36,
+      61,  62,  37,  38,  63,  64,  39,  40,
+      49,  50,  41,  42,  51,  52,  43,  44,
+      53,  54,  45,  46,  55,  56,  47,  48,
+    ]
+
+nanoz_mux2samtec = Adapters.Adapter(
+    nanoZ_mux_numbers, inclusive_list(1, 80))
+
+
 ## Adapter ON4
 # This is the Neuronexus A64-OM32x2 Adaptor
 # level 0 : Canonical Samtec ordering, looking into adaptor, top connector
