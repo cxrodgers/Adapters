@@ -45,6 +45,26 @@ from .channels import \
 
 ## Construct the entire dataflow
 # for wire64
+"""
+Checks:
+* This should match the MUX numbers arranged by Samtec in nanoZ manual
+  Adapters.dataflow.wire64_big_dataflow.set_index(
+  'samtec')['mux'].sort_index().reindex(range(1, 81)).values.reshape(20, 4)
+* This should match the HS numbers arranged by SlimStack in Tim's image of
+  the headstage. GND/REF are excluded, top is on top, order is flipped to
+  match Tim's image.
+  Adapters.dataflow.wire64_big_dataflow.set_index(
+  'slimstack')['hs'].sort_index().values.reshape(4, 16)[[2, 3, 0, 1], ::-1] 
+* This should match the MUX numbers, sorted by headstage numbers, in the
+  adaptors.ini addition for NZA SSB64 from Tim.
+  Adapters.dataflow.wire64_big_dataflow.set_index('hs')['mux'].sort_index()
+* This should match the MUX numbers, sorted by EIB numbers, in the V2 version
+  of the adaptors.ini that I made to be in tetrode order.
+  Adapters.dataflow.wire64_big_dataflow.set_index('enum')['mux'].sort_index()
+* This should match the EIB names, sorted by hs number, in the spreadsheet
+  from Tim
+  Adapters.dataflow.wire64_big_dataflow.set_index('hs')['ename'].sort_index()
+"""
 wire64_big_dataflow = pandas.DataFrame((
     wire64_eib_numbers2names + # enum to ename
     wire64_eib_names2headstage +  # ename to hs

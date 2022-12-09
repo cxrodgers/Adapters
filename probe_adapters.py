@@ -43,7 +43,7 @@ wire64_level0_eib_numbers = list(range(64))
 wire64_level1_eib_names = []
 for column_number in inclusive_list(1, 16):
     for row_name in inclusive_list(ord('A'), ord('D')):
-        name = '{}{:02}'.format(chr(row_name), column_number)
+        name = '{:02}{}'.format(column_number, chr(row_name))
         wire64_level1_eib_names.append(name)
 
 # Create adaptor
@@ -53,20 +53,21 @@ wire64_eib_numbers2names = Adapters.Adapter(
 
 # This relates eib hole name to headstage channel number
 # Thse are taken directly from the spreadsheet from Tim, except I added
-# a zero before the number to make it sort more nicely.
+# a zero before the number, and I put the row name last, to make it sort
+# more nicely.
 # I assume these  reflect the ordering of the channels in the data files 
 # saved by WM, as well as the order they are displayed in Open Ephys, 
 # as well as the ordering of the channels in the nanoZ when using Tim's 
 # "NZA SSB-64" addition to the electrodes.ini config file.
 wire64_eib_names_sorted_by_hs = [
-    'B01', 'C05', 'C01', 'A05', 'A01', 'D05', 'B05', 'D01', 
-    'A02', 'A06', 'C06', 'C02', 'B06', 'B02', 'D06', 'A07', 
-    'D02', 'A03', 'B07', 'C07', 'C03', 'A08', 'B03', 'D07', 
-    'B08', 'A04', 'A09', 'C08', 'D03', 'B09', 'B04', 'D08', 
-    'A10', 'C04', 'A13', 'B10', 'C09', 'D04', 'A11', 'B13', 
-    'D09', 'B11', 'D13', 'B14', 'A12', 'C10', 'C13', 'B12', 
-    'A14', 'C14', 'D16', 'D10', 'A15', 'C11', 'D14', 'A16', 
-    'D11', 'C15', 'B15', 'D15', 'C12', 'B16', 'D12', 'C16', 
+    '01B', '05C', '01C', '05A', '01A', '05D', '05B', '01D', 
+    '02A', '06A', '06C', '02C', '06B', '02B', '06D', '07A', 
+    '02D', '03A', '07B', '07C', '03C', '08A', '03B', '07D', 
+    '08B', '04A', '09A', '08C', '03D', '09B', '04B', '08D', 
+    '10A', '04C', '13A', '10B', '09C', '04D', '11A', '13B', 
+    '09D', '11B', '13D', '14B', '12A', '10C', '13C', '12B', 
+    '14A', '14C', '16D', '10D', '15A', '11C', '14D', '16A', 
+    '11D', '15C', '15B', '15D', '12C', '16B', '12D', '16C', 
     ]
 wire64_eib_names2headstage = Adapters.Adapter(
     wire64_eib_names_sorted_by_hs,
@@ -74,22 +75,42 @@ wire64_eib_names2headstage = Adapters.Adapter(
 
 
 ## slimstack2headstage
-#   SlimStack channel numbers. These are the pins on the SlimStack
-#   connector on the EIB. I don't actually know what these are yet, because
-#   I can only see the top side on Tim's image. I also don't know how SlimStack
-#   numbers the pins. I have faked this numbering for now, by assuming that they
-#   are in the same order as the headstage numbers (which is not true). 
-#   They are labeled top_00 to top_31, and bot_00 to bot_31, corresponding
-#   to the upper and lower SlimStack connectors, going first from left to right
-#   and then from top to bottom.
-wire64_slimstack_sorted_by_hs = (
-    ['top_{:02d}'.format(num) for num in range(32)] + 
-    ['bot_{:02d}'.format(num) for num in range(32)]
+# This is pasted on a file from tim PastedGraphic-1
+# It maps SlimStack number to headstage numbers
+# I number Slimstack with 'top_00' in the upper left corner as you look
+# at the EIB with Slimstack up. 
+# Tim's image is looking at the mating face, so it is flipped horizontally
+# from that standard orientation.
+# Also, nothing plugs into the corner pins of the Slimstack, these may 
+# actually not be real pins. 
+# this order will go from upper right to upper left in Tim's image, and
+# then downward, but always right to left not wraparound
+# Because I'm going from right to left here, this is actually the order
+# you get when looking at the front of the EIB and going left to right.
+wire64_slimstack2headstage_hs_sorted_by_slimstack_geometry = [
+     3,  8, 12, 17, 21, 29, 34, 38, 47, 43, 50, 55, 58, 60, 64, 51, 'GND',
+     2,  6, 11, 15, 20, 24, 28, 32, 37, 41, 46, 52, 54, 57, 61, 63, 'REF',
+     1,  5,  9, 14, 18, 23, 26, 31, 35, 40, 44, 49, 59, 53, 56, 62, 'GND',
+     4,  7, 10, 13, 16, 19, 22, 25, 27, 30, 33, 36, 39, 42, 45, 48, 'REF',
+    ]
+
+# SlimStack channel numbers. These are the pins on the SlimStack
+# connector on the EIB. 
+# They are labeled top_00 to top_33, and bot_00 to bot_33, corresponding
+# to the upper and lower SlimStack connectors, going first from left to right
+# and then from top to bottom. (No wraparound.)
+# The viewing direction is at the front of the EIB, with SlimStack up.
+# Because of the way the SlimStack mates, this has to be flipped horizontally
+# when looking at the headstage or at the nanoZ adapter.
+wire64_slimstack_sorted_geometrically = (
+    ['top_{:02d}'.format(num) for num in range(34)] + 
+    ['bot_{:02d}'.format(num) for num in range(34)]
     )
 
 wire64_slimstack2headstage = Adapters.Adapter(
-    wire64_slimstack_sorted_by_hs,
-    inclusive_list(1, 64))
+    wire64_slimstack_sorted_geometrically,
+    wire64_slimstack2headstage_hs_sorted_by_slimstack_geometry,
+    )
 
 
 ## NZA SSB-64
