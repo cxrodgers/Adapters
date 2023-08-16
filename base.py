@@ -58,7 +58,7 @@ class Adapter(object):
             a = l1
         
         # Convert to internal representation
-        self.table = np.asarray(a, dtype= object)
+        self.table = np.asarray(a, dtype=object)
         if self.table.ndim != 2 or self.table.shape[1] != 2:
             raise Exception("table should be a Nx2 array")
     

@@ -51,4 +51,6 @@ janelia_depth_df['Z'] = np.arange(0, 64 * 20, 20, dtype=int)
 
 h3_depth_df = pandas.DataFrame.from_dict(
     {'Prb': h3_sort_by_depth})
+    
 h3_depth_df['Z'] = np.arange(0, 64 * 20, 20, dtype=int)
+
