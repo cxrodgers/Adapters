@@ -47,8 +47,8 @@ janelia_bottom_sort_by_depth = [ch for ch in janelia_sort_by_depth
 # Calculate the actual depth of the janelia channels (will use this later)
 janelia_depth_df = pandas.DataFrame.from_dict(
     {'J': janelia_sort_by_depth})
-janelia_depth_df['Z'] = np.arange(0, 64 * 20, 20, dtype=np.int)
+janelia_depth_df['Z'] = np.arange(0, 64 * 20, 20, dtype=int)
 
 h3_depth_df = pandas.DataFrame.from_dict(
     {'Prb': h3_sort_by_depth})
-h3_depth_df['Z'] = np.arange(0, 64 * 20, 20, dtype=np.int)
+h3_depth_df['Z'] = np.arange(0, 64 * 20, 20, dtype=int)

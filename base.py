@@ -58,7 +58,7 @@ class Adapter(object):
             a = l1
         
         # Convert to internal representation
-        self.table = np.asarray(a, dtype=np.object)
+        self.table = np.asarray(a, dtype=object)
         if self.table.ndim != 2 or self.table.shape[1] != 2:
             raise Exception("table should be a Nx2 array")
     
@@ -108,7 +108,7 @@ class Adapter(object):
         
         new_table = list(a3.table.transpose())
         new_table.append(new_table[-1])
-        a3.table = np.asarray(new_table, dtype=np.object).transpose()
+        a3.table = np.asarray(new_table, dtype=object).transpose()
         for n, i2 in enumerate(self.outs):
             try:
                 a3.table[n, -1] = d[i2]
@@ -121,7 +121,7 @@ class Adapter(object):
             res = self.in2out[key]
         except TypeError:
             # key was a list
-            res = np.array([self.in2out[kk] for kk in key], dtype=np.object)
+            res = np.array([self.in2out[kk] for kk in key], dtype=object)
         except KeyError:
             # key not an input
             return None
