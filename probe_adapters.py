@@ -25,7 +25,7 @@ def inclusive_list(start, stop):
     return list(range(start, stop + 1))
 
 
-## wire64 EIB
+## wire64 and wire128 EIB 
 # This is the White Matter EIB
 # level 0 : EIB hole numbers. I made up this ordering, but it's meant to
 #   match the White Matter ordering, so it starts with the left-most column
@@ -38,10 +38,17 @@ def inclusive_list(start, stop):
 
 # level 0
 wire64_level0_eib_numbers = list(range(64))
+wire128_level0_eib_numbers = list(range(128))
 
 # level 1
 wire64_level1_eib_names = []
 for column_number in inclusive_list(1, 16):
+    for row_name in inclusive_list(ord('A'), ord('D')):
+        name = '{:02}{}'.format(column_number, chr(row_name))
+        wire64_level1_eib_names.append(name)
+        
+wire128_level1_eib_names = []
+for column_number in inclusive_list(1, 32):
     for row_name in inclusive_list(ord('A'), ord('D')):
         name = '{:02}{}'.format(column_number, chr(row_name))
         wire64_level1_eib_names.append(name)
@@ -71,6 +78,29 @@ wire64_eib_names_sorted_by_hs = [
     ]
 wire64_eib_names2headstage = Adapters.Adapter(
     wire64_eib_names_sorted_by_hs,
+    inclusive_list(1, 64))
+    
+wire128_eib_names_sorted_by_hs = [
+    '01B', '05C', '01C', '05A', '01A', '05D', '05B', '01D', 
+    '02A', '06A', '06C', '02C', '06B', '02B', '06D', '07A', 
+    '02D', '03A', '07B', '07C', '03C', '08A', '03B', '07D', 
+    '08B', '04A', '09A', '08C', '03D', '09B', '04B', '08D', 
+    '10A', '04C', '13A', '10B', '09C', '04D', '11A', '13B', 
+    '09D', '11B', '13D', '14B', '12A', '10C', '13C', '12B', 
+    '14A', '14C', '16D', '10D', '15A', '11C', '14D', '16A', 
+    '11D', '15C', '15B', '15D', '12C', '16B', '12D', '16C',
+    
+    '17B', '21C', '17C', '21A', '17A', '21D', '21B', '17D', 
+    '18A', '22A', '22C', '18C', '22B', '18B', '22D', '23A', 
+    '18D', '19A', '23B', '23C', '19C', '24A', '19B', '23D', 
+    '08B', '04A', '09A', '08C', '03D', '09B', '04B', '08D', 
+    '10A', '04C', '13A', '10B', '09C', '04D', '11A', '13B', 
+    '09D', '11B', '13D', '14B', '12A', '10C', '13C', '12B', 
+    '14A', '14C', '16D', '10D', '15A', '11C', '14D', '16A', 
+    '11D', '15C', '15B', '15D', '12C', '16B', '12D', '16C',
+    ]
+wire128_eib_names2headstage = Adapters.Adapter(
+    wire128_eib_names_sorted_by_hs,
     inclusive_list(1, 64))
 
 
@@ -111,6 +141,18 @@ wire64_slimstack2headstage = Adapters.Adapter(
     wire64_slimstack_sorted_geometrically,
     wire64_slimstack2headstage_hs_sorted_by_slimstack_geometry,
     )
+wire128_slimstack_sorted_geometrically = (
+    ['top1_{:02d}'.format(num) for num in range(34)] + 
+    ['bot1_{:02d}'.format(num) for num in range(34)] +
+    ['top2_{:02d}'.format(num) for num in range(34)] + 
+    ['bot2_{:02d}'.format(num) for num in range(34)]
+    )
+
+wire128_slimstack2headstage = Adapters.Adapter(
+    wire128_slimstack_sorted_geometrically,
+    wire128_slimstack2headstage_hs_sorted_by_slimstack_geometry,
+    )
+
 
 
 ## NZA SSB-64
@@ -121,7 +163,11 @@ mux_sorted_by_headstage = [
      1, 57, 42, 10,  2, 33,  9, 41,  3, 12, 34, 44, 11,  4, 35, 14, 
     43,  6, 13, 36, 46, 16,  5, 38, 15,  8, 24, 37, 48, 23, 7, 40, 
     22, 45, 32, 21, 39, 47, 20, 31, 64, 19, 54, 30, 18, 63, 56, 17, 
-    29, 55, 49, 62, 27, 61, 53, 26, 60, 52, 28, 51, 59, 25, 58, 50, 
+    29, 55, 49, 62, 27, 61, 53, 26, 60, 52, 28, 51, 59, 25, 58, 50,
+    65, 121, 106, 74, 66, 97, 73, 105, 67, 76, 98, 108, 75, 68, 99,  
+    78, 107, 70, 77, 100, 110, 80, 69, 102, 79, 72, 88, 101, 112, 87,
+    71, 104,  86, 109, 96, 85, 103, 111, 84, 95, 128, 83, 118, 94, 82, 127, 
+    120, 81, 93, 119, 113, 126, 91, 125, 117, 90, 124, 116, 92, 115, 123, 89, 122, 114    
 ]
 nza_SSB6_64 = Adapters.Adapter(
     mux_sorted_by_headstage,
