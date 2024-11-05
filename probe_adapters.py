@@ -1,4 +1,5 @@
-"""The various adapters I've made that go from Samtec to headstage.
+"""
+The various adapters I've made that go from Samtec to headstage.
 
 Samtec pin ordering:
 I always have Pin #1 in the upper left when looking at the adapter, or at
@@ -116,14 +117,14 @@ wire128_eib_names2headstage = Adapters.Adapter(
 # then downward, but always right to left not wraparound
 # Because I'm going from right to left here, this is actually the order
 # you get when looking at the front of the EIB and going left to right.
+#For 128 channels I included a top 1 and bot 1 for the first board and top 2 and
+# and bot 2 for the second board with the first being the board highest on the stack. 
 wire64_slimstack2headstage_hs_sorted_by_slimstack_geometry = [
      3,  8, 12, 17, 21, 29, 34, 38, 47, 43, 50, 55, 58, 60, 64, 51, 'GND',
      2,  6, 11, 15, 20, 24, 28, 32, 37, 41, 46, 52, 54, 57, 61, 63, 'REF',
      1,  5,  9, 14, 18, 23, 26, 31, 35, 40, 44, 49, 59, 53, 56, 62, 'GND',
      4,  7, 10, 13, 16, 19, 22, 25, 27, 30, 33, 36, 39, 42, 45, 48, 'REF',
     ]
-
-
 
 wire128_slimstack2headstage_hs_sorted_by_slimstack_geometry = [ 
      3,  8, 12, 17, 21, 29, 34, 38, 47, 43, 50, 55, 58, 60, 64, 51, 'GND',
@@ -152,7 +153,7 @@ wire64_slimstack2headstage = Adapters.Adapter(
     wire64_slimstack_sorted_geometrically,
     wire64_slimstack2headstage_hs_sorted_by_slimstack_geometry,
     )
-#Similar to code above but 
+#Similar to code above but extened for 128 channels
 wire128_slimstack_sorted_geometrically = (
     ['top1_{:02d}'.format(num) for num in range(34)] + 
     ['bot1_{:02d}'.format(num) for num in range(34)] +
@@ -167,24 +168,28 @@ wire128_slimstack2headstage = Adapters.Adapter(
 
 
 
-## NZA SSB-64
+## NZA SSB-64 and SSB-128
 # This is inferred from NZA-SSB6r2-adaptor-map.ini from Tim
 # I assume these MUX numbers are in the same order as the headstage channels
 # So I extracted the MUX numbers, and map them to inclusive_list(1, 64)
+#I added an additional 64 channels for dual implant recordings. 
 mux_sorted_by_headstage = [
      1, 57, 42, 10,  2, 33,  9, 41,  3, 12, 34, 44, 11,  4, 35, 14, 
     43,  6, 13, 36, 46, 16,  5, 38, 15,  8, 24, 37, 48, 23, 7, 40, 
     22, 45, 32, 21, 39, 47, 20, 31, 64, 19, 54, 30, 18, 63, 56, 17, 
-    29, 55, 49, 62, 27, 61, 53, 26, 60, 52, 28, 51, 59, 25, 58, 50,]
-    #~ 65, 121, 106, 74, 66, 97, 73, 105, 67, 76, 98, 108, 75, 68, 99,  
-    #~ 78, 107, 70, 77, 100, 110, 80, 69, 102, 79, 72, 88, 101, 112, 87,
-    #~ 71, 104,  86, 109, 96, 85, 103, 111, 84, 95, 128, 83, 118, 94, 82, 127, 
-    #~ 120, 81, 93, 119, 113, 126, 91, 125, 117, 90, 124, 116, 92, 115, 123, 89, 122, 114    
-#~ ]
+    29, 55, 49, 62, 27, 61, 53, 26, 60, 52, 28, 51, 59, 25, 58, 50,
+    65, 121, 106, 74, 66, 97, 73, 105, 67, 76, 98, 108, 75, 68, 99,  
+    78, 107, 70, 77, 100, 110, 80, 69, 102, 79, 72, 88, 101, 112, 87,
+    71, 104,  86, 109, 96, 85, 103, 111, 84, 95, 128, 83, 118, 94, 82, 127, 
+    120, 81, 93, 119, 113, 126, 91, 125, 117, 90, 124, 116, 92, 115, 123, 89, 122, 114    
+]
 nza_SSB6_64 = Adapters.Adapter(
     mux_sorted_by_headstage,
     inclusive_list(1, 64))
-
+    
+nza_SSB6_128 = Adapters.Adapter(
+    mux_sorted_by_headstage,
+    inclusive_list(1, 128))
 
 ## nanoZ mux mapping
 # This is taken from the image from the nanoZ manual
@@ -201,9 +206,33 @@ nanoZ_mux_numbers = [
       49,  50,  41,  42,  51,  52,  43,  44,
       53,  54,  45,  46,  55,  56,  47,  48,
     ]
-
 nanoz_mux2samtec = Adapters.Adapter(
     nanoZ_mux_numbers, inclusive_list(1, 80))
+     
+nanoZ_mux_numbers128 = [ 
+      25,'N1', 'G',   1,  26,'N2','N3',   2,
+      27,'N4','N5',   3,  28,'N6','N7',   4,
+      29,  30,   5,   6,  31,  32,   7,   8,
+      17,  18,   9,  10,  19,  20,  11,  12,
+      21,  22,  13,  14,  23,  24,  15,  16,
+      57,'N8', 'G',  33,  58,'N9','NA',  34,
+      59,'NB','NC',  35,  60,'ND','NE',  36,
+      61,  62,  37,  38,  63,  64,  39,  40,
+      49,  50,  41,  42,  51,  52,  43,  44,
+      53,  54,  45,  46,  55,  56,  47,  48,
+      89,  'N1', 'G',  65,  90,  'N2',  'N3',  66,
+      91,  'N4', 'N5',  67,  92,  'N6', 'N7',  68,  
+      93,  94,  69,  70,  95,  96,  71,  72,  
+      81,  82, 73,  74,  83,  84,  75,  76,  
+      85,  86,  77,  78,  87,  88,  79, 80,
+      121, 'N8',  'G',  97, 122,  'N9',  'NA',  98, 
+      123, 'NB',  'NC',  99, 124,  'ND',  'NE', 100,
+      125, 126, 101, 102, 127, 128, 103, 104,
+      113, 114, 105, 106, 115, 116, 107, 108, 
+      117, 118, 109, 110, 119, 120, 111, 112
+    ]
+nanoz_mux2samtec128 = Adapters.Adapter(
+    nanoZ_mux_numbers, inclusive_list(1, 160))
 
 
 ## Adapter ON4

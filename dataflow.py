@@ -14,9 +14,14 @@ from .probe_adapters import \
     A64OM32x2sm_samtec2omnetics, \
     wire64_eib_numbers2names, \
     wire64_slimstack2headstage, \
-    wire64_eib_names2headstage, \
-    nza_SSB6_64, \
-    nanoz_mux2samtec
+    wire64_eib_names2headstage,\
+    wire128_eib_numbers2names, \
+    wire128_slimstack2headstage, \
+    wire128_eib_names2headstage, \
+    nza_SSB6_64,  \
+    nza_SSB6_128, \
+    nanoz_mux2samtec \
+    nanoz_mux2samtec128
 
 from .probes import \
     samtec2nn, \
@@ -76,7 +81,19 @@ wire64_big_dataflow = pandas.DataFrame((
 wire64_big_dataflow = wire64_big_dataflow.join(
     pandas.DataFrame(wire64_slimstack2headstage.table, 
     columns=['slimstack', 'hs']).set_index('hs'), on='hs')
-   
+    
+# for wire128
+wire128_big_dataflow = pandas.DataFrame((
+    wire128_eib_numbers2names + # enum to ename
+    wire128_eib_names2headstage +  # ename to hs
+    nza_SSB6_128.inv + # hs to mux
+    nanoz_mux2samtec128 # mux to samtec
+    ).table, 
+    columns=['enum', 'ename', 'hs', 'mux', 'samtec'])
+
+wire128_big_dataflow = wire128_big_dataflow.join(
+    pandas.DataFrame(wire128_slimstack2headstage.table, 
+    columns=['slimstack', 'hs']).set_index('hs'), on='hs')
 # Neuronexus probes
 dataflow_poly2 = (
     samtec2nn.inv + samtecflipped2omnetics + omnetics2intan + intan2gui).sort_by(
