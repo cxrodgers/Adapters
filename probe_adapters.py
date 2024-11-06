@@ -52,12 +52,16 @@ wire128_level1_eib_names = []
 for column_number in inclusive_list(1, 32):
     for row_name in inclusive_list(ord('A'), ord('D')):
         name = '{:02}{}'.format(column_number, chr(row_name))
-        wire64_level1_eib_names.append(name)
+        wire128_level1_eib_names.append(name)
 
 # Create adaptor
 wire64_eib_numbers2names = Adapters.Adapter(
     wire64_level0_eib_numbers,
     wire64_level1_eib_names)
+
+wire128_eib_numbers2names = Adapters.Adapter(
+    wire128_level0_eib_numbers,
+    wire128_level1_eib_names)
 
 # This relates eib hole name to headstage channel number
 # Thse are taken directly from the spreadsheet from Tim, except I added

@@ -20,7 +20,7 @@ from .probe_adapters import \
     wire128_eib_names2headstage, \
     nza_SSB6_64,  \
     nza_SSB6_128, \
-    nanoz_mux2samtec \
+    nanoz_mux2samtec, \
     nanoz_mux2samtec128
 
 from .probes import \
