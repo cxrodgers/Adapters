@@ -1,4 +1,8 @@
-"""Pinout for each probe, from channel numbers to Samtec numbers."""
+"""Pinout for each probe, from channel numbers to Samtec numbers.
+
+This file is no longer used because we don't always even have Samtec numbers.
+In that case just use probe_adapters.py
+"""
 
 from builtins import range
 import Adapters

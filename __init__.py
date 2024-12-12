@@ -4,9 +4,11 @@ base.py provides the Adapter class
 channels : the list of channels sorted geometrically as they are on each
     probe
 probes : the mapping between the channel numbers and the Samtec numbers
-    for each probe
+    for each probe. This is now a misnomer, it seems to only be for 
+    mapping Samtec pins to electrode numbers.
 probe_adapters : the mapping from Samtec numbers through the various
-    kinds of adapters that I've made
+    kinds of adapters that I've made. This is now the one we use for 
+    almost everything, including stuff that doesn't go through Samtec.
 headstages : the mapping onto Intan stuff
 dataflow : constructing the complete flow of channels from probe to
     headstage

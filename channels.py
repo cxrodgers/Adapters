@@ -1,14 +1,15 @@
 """Lists of channels in the order they are on the probes.
 
+Seems like this file should be the one called probes.py
 """
 
-from builtins import range
 import pandas
 import numpy as np
 
 
-## These are the channels numbers for each probe sorted from superficial
-# to deep
+## These are the channels numbers for each probe 
+# Channel numbers are always sorted from superficial to deep
+
 # This is the Neuronexus numbering for the Poly2 channels sorted by depth
 # from superficial to deep.
 poly2_NN_sort_by_depth = [
