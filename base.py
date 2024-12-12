@@ -150,18 +150,14 @@ class Adapter(object):
     def sort_by(self, keys, reverse=False):
         """Inplace sort by keys.
         
-        If keys is:
-            'ins' : sort by inputs
-            'outs' : sort by outpus
-            a list of inputs : sort in that order
+        keys : list-like, or 1d array
+            This is a list of inputs
+            The result will be sorted in that order
+            Each entry in `keys` must be an input
+
+        Returns : self
+            Sorts the `table` and returns self
         """
-        if keys == 'ins':
-            keys = sorted(self.table[:, 0])
-        elif keys == 'outs':
-            t = sorted(self.table[:, -1])
-            keys = [self.out2in[tt] for tt in t]
-            
-        
         if reverse:
             keys = keys[::-1]
     
