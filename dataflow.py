@@ -27,8 +27,7 @@ from .probes import \
     samtec2nn, \
     samtec2janelia_top, \
     samtec2janelia_bottom, \
-    samtec2janelia_64ch, \
-    interposer2samtec_shifted
+    samtec2janelia_64ch
     
 from .headstages import \
     intan2gui, \
@@ -48,6 +47,7 @@ from .channels import \
     h3_depth_df
 
 ## Construct the entire dataflow
+
 # for wire64
 """
 Checks:
