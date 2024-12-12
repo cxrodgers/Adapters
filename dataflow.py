@@ -28,7 +28,6 @@ from .probes import \
     samtec2janelia_top, \
     samtec2janelia_bottom, \
     samtec2janelia_64ch, \
-    adrian_8shank2interposer, \
     interposer2samtec_shifted
     
 from .headstages import \
@@ -148,16 +147,6 @@ dataflow_helen_64ch = (
     intan2gui_64ch # Intan to GUI numbers
     ).sort_by(h3_sort_by_depth) # Sorts by H3 depth and excludes NC
 
-# Adrian
-dataflow_adrian = (
-    adrian_8shank2interposer + 
-    interposer2samtec_shifted + 
-    ON4_samtec2omnetics + 
-    omnetics2intan_64ch + 
-    intan2gui_64ch
-    )
-
-
 # Dataframe it
 dataflow_poly2_df = pandas.DataFrame(dataflow_poly2.table,
     columns=['NN', 'Sam', 'Om', 'Int', 'GUI'], dtype=int)
@@ -173,8 +162,6 @@ dataflow_janelia_64ch_ON2_df = pandas.DataFrame(dataflow_janelia_64ch_ON2.table,
     columns=['J', 'Sam', 'Om', 'Int', 'GUI'], dtype=int)
 dataflow_janelia_64ch_ON4_df = pandas.DataFrame(dataflow_janelia_64ch_ON4.table,
     columns=['J', 'Sam', 'Om', 'Int', 'GUI'], dtype=int)
-dataflow_adrian_df = pandas.DataFrame(dataflow_adrian.table,
-    columns=['E', 'Interp', 'Sam', 'Om', 'Int', 'GUI'], dtype=int)
 
 # The dataflow for H3 is actually the same as for the others, except for
 # the channel ordering (imposed below)
