@@ -10,7 +10,7 @@ somewhere it doesn't break the whole module.
 import numpy as np
 import pandas
 
-def assy_325():
+def h3_64ch_assy_325():
     """Return dataflow for Diagnostic Biochips 64-4
     
     This probe was renamed ASSY-325 H3 & L3 by Cambridge Neurotech.
@@ -49,8 +49,10 @@ def assy_325():
 
     # Always index by site
     assy325_dataflow = assy325_dataflow.sort_index()
+    
+    return assy325_dataflow
 
-def assy_350():
+def h12_128ch_assy_350():
     """Return dataflow for Diagnostic Biochips 128-2
     
     This probe was renamed ASSY-350 H12 & L13 by Cambridge Neurotech.
@@ -100,3 +102,5 @@ def assy_350():
 
     # Always index by site
     assy350_dataflow = assy350_dataflow.sort_index()
+    
+    return assy350_dataflow
