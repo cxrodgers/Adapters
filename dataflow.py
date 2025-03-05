@@ -48,7 +48,7 @@ from .channels import \
 
 ## Construct the entire dataflow
 
-# for wire64
+## for wire64
 """
 Checks:
 * This should match the MUX numbers arranged by Samtec in nanoZ manual
@@ -81,7 +81,29 @@ wire64_big_dataflow = wire64_big_dataflow.join(
     pandas.DataFrame(wire64_slimstack2headstage.table, 
     columns=['slimstack', 'hs']).set_index('hs'), on='hs')
     
-# for wire128
+# add x, y, and k
+# Generate position of each channel with each tetrode as small group
+# This doesn't correspond to actual geometry but just keeps the channels
+# on a tetrode close together
+wire64_big_dataflow['ycoord'] = (
+    wire64_big_dataflow['enum'].astype(int) // 4) * 100
+wire64_big_dataflow.loc[
+    np.mod(wire64_big_dataflow['enum'], 4) == 0, 'ycoord'] -= 10
+wire64_big_dataflow.loc[
+    np.mod(wire64_big_dataflow['enum'], 4) == 2, 'ycoord'] += 10
+
+wire64_big_dataflow['xcoord'] = 0
+wire64_big_dataflow.loc[
+    np.mod(wire64_big_dataflow['enum'], 4) == 1, 'xcoord'] -= 10
+wire64_big_dataflow.loc[
+    np.mod(wire64_big_dataflow['enum'], 4) == 3, 'xcoord'] += 10
+
+# Identify cluster groups for each tetrode
+wire64_big_dataflow['kcoord'] = 1 + (
+    wire64_big_dataflow['enum'].astype(int) // 4)
+
+
+## for wire128
 wire128_big_dataflow = pandas.DataFrame((
     wire128_eib_numbers2names + # enum to ename
     wire128_eib_names2headstage +  # ename to hs
@@ -93,7 +115,30 @@ wire128_big_dataflow = pandas.DataFrame((
 wire128_big_dataflow = wire128_big_dataflow.join(
     pandas.DataFrame(wire128_slimstack2headstage.table, 
     columns=['slimstack', 'hs']).set_index('hs'), on='hs')
-# Neuronexus probes
+
+# add x, y, and k
+# Generate position of each channel with each tetrode as small group
+# This doesn't correspond to actual geometry but just keeps the channels
+# on a tetrode close together
+wire128_big_dataflow['ycoord'] = (
+    wire128_big_dataflow['enum'].astype(int) // 4) * 100
+wire128_big_dataflow.loc[
+    np.mod(wire128_big_dataflow['enum'], 4) == 0, 'ycoord'] -= 10
+wire128_big_dataflow.loc[
+    np.mod(wire128_big_dataflow['enum'], 4) == 2, 'ycoord'] += 10
+
+wire128_big_dataflow['xcoord'] = 0
+wire128_big_dataflow.loc[
+    np.mod(wire128_big_dataflow['enum'], 4) == 1, 'xcoord'] -= 10
+wire128_big_dataflow.loc[
+    np.mod(wire128_big_dataflow['enum'], 4) == 3, 'xcoord'] += 10
+
+# Identify cluster groups for each tetrode
+wire128_big_dataflow['kcoord'] = 1 + (
+    wire128_big_dataflow['enum'].astype(int) // 4)
+
+
+## Neuronexus probes
 dataflow_poly2 = (
     samtec2nn.inv + samtecflipped2omnetics + omnetics2intan + intan2gui).sort_by(
     poly2_NN_sort_by_depth)
